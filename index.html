@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f8edf0"><title>Babe Skin | Beauty Shop</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#fff8f7;--card:#fff;--ink:#35262c;--muted:#8d777f;--rose:#b96f83;--rose2:#f2dce2;--line:#f0e2e5;--cream:#f8eee4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:26px 18px 20px;background:linear-gradient(135deg,#f5dfe5,#fbf1e8);border-bottom:1px solid var(--line)}
+.eyebrow{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#985568;font-weight:800}
+h1{font-family:Georgia,serif;font-size:34px;line-height:1;margin:10px 0 9px;letter-spacing:-.7px}.sub{margin:0;color:#7d626b;font-size:13px}.pill{display:inline-block;margin-top:13px;border:1px solid #d9a9b6;border-radius:20px;padding:5px 10px;font-size:10px;letter-spacing:.5px;color:#855263}
+.searchwrap{padding:14px 16px 4px}.search{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:white;font:inherit;outline:none}
+main{padding:12px 16px 112px}.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:12px 0}.sectionhead h2{font-family:Georgia,serif;font-size:21px;font-weight:500;margin:0}.count{font-size:11px;color:var(--muted)}
+.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.product{background:var(--card);border:1px solid var(--line);border-radius:17px;overflow:hidden;display:flex;flex-direction:column;min-width:0;box-shadow:0 4px 18px #7b4b5510}
+.product-art{height:128px;display:flex;align-items:center;justify-content:center;background:var(--rose2);font-size:46px}.product:nth-child(3n+2) .product-art{background:var(--cream)}.product:nth-child(3n) .product-art{background:#f1e8ed}
+.details{padding:11px;display:flex;flex-direction:column;flex:1}.name{font-weight:650;font-size:14px;margin-bottom:4px}.desc{font-size:11px;color:var(--muted);min-height:30px}.bottom{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-top:10px}.price{font-weight:750;font-size:13px}.add{border:0;background:var(--rose);color:white;border-radius:11px;width:33px;height:33px;font-size:21px;cursor:pointer}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:30px 0}
+.cartbar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#fff8f7ed;border-top:1px solid var(--line);backdrop-filter:blur(12px)}
+.cartbutton{width:100%;border:0;border-radius:15px;background:var(--rose);color:white;padding:15px 16px;font:inherit;font-weight:700;display:flex;justify-content:space-between;cursor:pointer}
+.overlay{position:fixed;inset:0;background:#2e1e254d;display:none;align-items:flex-end;z-index:5}.overlay.open{display:flex}.sheet{background:var(--bg);width:100%;max-height:90vh;overflow:auto;border-radius:23px 23px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
+.sheettop{display:flex;justify-content:space-between;align-items:center}.sheet h2{font-family:Georgia,serif;margin:0;font-size:24px;font-weight:500}.close{border:0;background:white;border-radius:50%;width:34px;height:34px;font-size:20px}
+.cartline{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);gap:10px}.cartname{font-weight:600}.cartmeta{font-size:12px;color:var(--muted)}.qty{display:flex;align-items:center;gap:10px}.qty button{border:1px solid var(--line);background:white;border-radius:8px;width:28px;height:28px;font-size:17px}
+.field{display:block;margin:13px 0 5px;font-size:12px;color:var(--muted);font-weight:650}.input,.select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;font:inherit;background:white;color:var(--ink)}.totalrow{display:flex;justify-content:space-between;font-weight:750;font-size:17px;padding:15px 0}.paybox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin:13px 0;font-size:12px;color:var(--muted)}.checkout{width:100%;padding:14px;border:0;border-radius:13px;background:var(--rose);color:white;font:inherit;font-weight:700}.hint{font-size:11px;color:var(--muted);margin-top:10px}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#35262c;color:white;padding:10px 15px;border-radius:12px;font-size:13px;display:none;z-index:9}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:16px}
+</style></head><body>
+<header><div class="eyebrow">Beauty • Care • Confidence</div><h1>Babe Skin</h1><p class="sub">Your little ritual for glowing skin ♡</p><span class="pill">NATURE FOR GLOWING YOU</span></header>
+<div class="searchwrap"><input id="search" class="search" placeholder="Search skincare & beauty…" aria-label="Search products"></div>
+<main><div class="sectionhead"><h2>Shop the edit</h2><span class="count" id="productCount"></span></div><div class="products" id="products"></div></main>
+<footer>Thank you for choosing Babe Skin ♡</footer>
+<div class="cartbar"><button class="cartbutton" onclick="openCart()"><span>♡ Bag <span id="cartCount">0</span></span><span id="cartTotal">$0.00 / ៛0</span></button></div>
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeCart()"><section class="sheet">
+<div class="sheettop"><h2>Your order</h2><button class="close" onclick="closeCart()" aria-label="Close">×</button></div>
+<div id="cartItems"></div><div class="totalrow"><span>Total</span><span id="sheetTotal"></span></div>
+<label class="field" for="customerName">Your name</label><input class="input" id="customerName" placeholder="Name">
+<label class="field" for="customerPhone">Phone number</label><input class="input" id="customerPhone" type="tel" placeholder="e.g. 012 345 678">
+<label class="field" for="customerAddress">Delivery location</label><input class="input" id="customerAddress" placeholder="District / address">
+<label class="field" for="payment">Payment method</label><select class="select" id="payment"><option>ABA QR</option><option>Cash on delivery</option></select>
+<label class="field" for="customerNote">Note (optional)</label><input class="input" id="customerNote" placeholder="Skin type, product option, delivery note…">
+<div class="paybox" id="paymentNote">ABA QR payment: confirm payment with Babe Skin before your order is prepared. Add your ABA QR image/link to this section when ready.</div>
+<button class="checkout" onclick="placeOrder()">Place order</button>
+<p class="hint">Order records are saved only after you configure the optional Google Apps Script endpoint in SETUP.txt. Without it, this app opens a Telegram order message for the customer to send.</p>
+</section></div><div class="toast" id="toast"></div>
+<script>
+/* SHOP SETTINGS — update seller username, endpoint, product names and prices here. */
+const SHOP_NAME="Babe Skin";
+const SELLER_USERNAME=""; // Your public Telegram username, without @
+const ORDER_ENDPOINT=""; // Optional Google Apps Script Web App URL; see SETUP.txt
+const KHR_PER_USD=4100; // Example display rate only. Change to your preferred rate.
+const products=[
+{id:1,name:"Blush Lip Oil",desc:"Soft shine for everyday lips",usd:5.00,emoji:"💄"},
+{id:2,name:"Mini Perfume",desc:"Your signature scent, mini size",usd:8.00,emoji:"🌸"},
+{id:3,name:"Glow Skincare Set",desc:"A little self-care ritual",usd:12.00,emoji:"🧴"},
+{id:4,name:"Beauty Essentials",desc:"Small things, lovely details",usd:3.50,emoji:"🎀"}
+];
+const cart={};
+const fmtUSD=n=>"$"+n.toFixed(2);
+const fmtKHR=n=>"៛"+Math.round(n).toLocaleString("en-US");
+const both=n=>fmtUSD(n)+" / "+fmtKHR(n*KHR_PER_USD);
+document.getElementById("payment").addEventListener("change",e=>{document.getElementById("paymentNote").textContent=e.target.value==="ABA QR"?"ABA QR payment: confirm payment with Babe Skin before your order is prepared. Add your ABA QR image/link to this section when ready.":"Pay cash to the delivery person when your order arrives.";});
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function renderProducts(){const q=document.getElementById("search").value.trim().toLowerCase();const shown=products.filter(p=>(p.name+" "+p.desc).toLowerCase().includes(q));document.getElementById("productCount").textContent=shown.length+" items";document.getElementById("products").innerHTML=shown.length?shown.map(p=>`<article class="product"><div class="product-art">${p.emoji}</div><div class="details"><div class="name">${esc(p.name)}</div><div class="desc">${esc(p.desc)}</div><div class="bottom"><span class="price">${both(p.usd)}</span><button class="add" onclick="addToCart(${p.id})" aria-label="Add ${esc(p.name)}">+</button></div></div></article>`).join(""):'<div class="empty">No products found.</div>';}
+function addToCart(id){cart[id]=(cart[id]||0)+1;updateCart();toast("Added to your bag");}
+function updateCart(){const count=Object.values(cart).reduce((a,b)=>a+b,0);const total=products.reduce((s,p)=>s+p.usd*(cart[p.id]||0),0);document.getElementById("cartCount").textContent=count;document.getElementById("cartTotal").textContent=both(total);document.getElementById("sheetTotal").textContent=both(total);document.getElementById("cartItems").innerHTML=products.filter(p=>cart[p.id]).map(p=>`<div class="cartline"><div><div class="cartname">${esc(p.name)}</div><div class="cartmeta">${both(p.usd)} each</div></div><div class="qty"><button onclick="qty(${p.id},-1)">−</button><b>${cart[p.id]}</b><button onclick="qty(${p.id},1)">+</button></div></div>`).join("")||'<p class="hint">Your bag is empty. Add a product to begin.</p>';}
+function qty(id,d){cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];updateCart();}
+function openCart(){document.getElementById("overlay").classList.add("open");if(window.Telegram?.WebApp)Telegram.WebApp.expand();}
+function closeCart(){document.getElementById("overlay").classList.remove("open");}
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.style.display="block";setTimeout(()=>el.style.display="none",1700);}
+async function placeOrder(){
+ const chosen=products.filter(p=>cart[p.id]);if(!chosen.length){toast("Please add a product first");return;}
+ const name=document.getElementById("customerName").value.trim(),phone=document.getElementById("customerPhone").value.trim(),address=document.getElementById("customerAddress").value.trim(),payment=document.getElementById("payment").value,note=document.getElementById("customerNote").value.trim();
+ if(!name||!phone||!address){toast("Fill in name, phone and location");return;}
+ const total=chosen.reduce((s,p)=>s+p.usd*cart[p.id],0);
+ const order={orderId:"BS-"+Date.now().toString().slice(-8),shop:SHOP_NAME,createdAt:new Date().toISOString(),items:chosen.map(p=>({name:p.name,quantity:cart[p.id],unitUSD:p.usd,lineUSD:p.usd*cart[p.id],lineKHR:Math.round(p.usd*cart[p.id]*KHR_PER_USD)})),totalUSD:total,totalKHR:Math.round(total*KHR_PER_USD),customer:{name,phone,address,note},payment,status:"New"};
+ const message=`NEW ORDER ${order.orderId} — ${SHOP_NAME}\n${chosen.map(p=>`${p.name} x${cart[p.id]} — ${both(p.usd*cart[p.id])}`).join("\n")}\nTOTAL: ${both(total)}\nCustomer: ${name}\nPhone: ${phone}\nLocation: ${address}\nPayment: ${payment}${note?"\nNote: "+note:""}`;
+ let saved=false;
+ if(ORDER_ENDPOINT){
+   try{await fetch(ORDER_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)});saved=true;}catch(e){console.error(e);}
+ }
+ if(SELLER_USERNAME){window.open("https://t.me/"+encodeURIComponent(SELLER_USERNAME)+"?text="+encodeURIComponent(message),"_blank");}
+ else {window.open("https://t.me/share/url?url="+encodeURIComponent("Babe Skin order "+order.orderId)+"&text="+encodeURIComponent(message),"_blank");}
+ toast(saved?"Order submitted for recording. Please send Telegram message too.":"Order message prepared — send it in Telegram.");
+}
+renderProducts();updateCart();
+if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();Telegram.WebApp.setHeaderColor("#f5dfe5");Telegram.WebApp.setBackgroundColor("#fff8f7");}
+</script></body></html>
